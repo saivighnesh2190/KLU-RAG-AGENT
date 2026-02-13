@@ -1,0 +1,193 @@
+# KL University - Academic Policies and Guidelines
+
+## Attendance Policy
+
+### Minimum Attendance Requirement
+- Students must maintain a minimum of **75% attendance** in each course to be eligible to appear for end-semester examinations.
+- Students with attendance between 65% and 75% may be allowed to appear for exams with a warning letter.
+- Students with less than 65% attendance will be **detained** and must repeat the course.
+
+### Attendance Tracking
+- Attendance is recorded for every class session
+- Biometric attendance may be used in laboratories
+- Students can view their attendance through the student portal
+- Attendance reports are sent to parents monthly
+
+### Leave Policy
+- Medical leave requires submission of medical certificate within 3 days
+- Prior permission required for planned leaves
+- Maximum 10 days leave per semester without affecting attendance
+- Participation in university-approved events may be considered as "On Duty"
+
+## Examination Rules
+
+### Continuous Internal Evaluation (CIE)
+- CIE carries **40%** of total marks
+- Components: Assignments (10%), Quizzes (10%), Mid-term exams (20%)
+- No re-examination for internal assessments
+- Minimum 40% in CIE required to pass
+
+### End Semester Examination (ESE)
+- ESE carries **60%** of total marks
+- Duration: 3 hours
+- Minimum 40% in ESE required to pass
+- Overall pass mark: 40% (CIE + ESE combined)
+
+### Examination Conduct
+- Students must carry valid ID card to examination hall
+- Mobile phones strictly prohibited
+- Use of unfair means leads to cancellation of paper
+- Malpractice attracts disciplinary action
+- Late entry allowed up to 30 minutes
+- No exit before 1 hour
+
+### Revaluation and Recounting
+- Applications accepted within 15 days of results
+- Revaluation fee: ₹500 per paper
+- Recounting fee: ₹200 per paper
+- Results typically declared within 30 days
+
+## Grading System
+
+### 10-Point CGPA Scale
+
+| Grade | Grade Points | Marks Range |
+|-------|-------------|-------------|
+| O     | 10          | 90-100      |
+| A+    | 9           | 80-89       |
+| A     | 8           | 70-79       |
+| B+    | 7           | 60-69       |
+| B     | 6           | 50-59       |
+| C     | 5           | 40-49       |
+| F     | 0           | Below 40    |
+
+### CGPA Calculation
+CGPA = Σ(Credit × Grade Point) / Σ(Credit)
+
+### Classification of Results
+- First Class with Distinction: CGPA ≥ 8.0
+- First Class: CGPA ≥ 6.5
+- Second Class: CGPA ≥ 5.5
+- Pass Class: CGPA ≥ 5.0
+
+## Library Rules
+
+### General Rules
+- Valid ID card required for entry
+- Maintain silence in reading areas
+- Mobile phones must be on silent mode
+- Food and beverages not allowed
+- Reference books are for in-library use only
+
+### Borrowing Privileges
+- Undergraduate students: 4 books for 14 days
+- Postgraduate students: 6 books for 21 days
+- Research scholars: 10 books for 30 days
+- Faculty: 15 books for 60 days
+
+### Fines and Penalties
+- Late return: ₹5 per day per book
+- Lost book: Cost of book + 25% processing fee
+- Damaged book: Full replacement cost
+
+### Digital Resources
+- Access to 10,000+ e-journals
+- NPTEL video lectures
+- IEEE, Springer, Elsevier databases
+- Remote access available for registered users
+
+## Hostel Rules
+
+### General Guidelines
+- Ragging is strictly prohibited and punishable
+- Visitors allowed only in designated areas during visiting hours
+- Prior permission required for overnight stay outside
+- Students must return to hostel by 9:00 PM
+- Gate pass required for leaving campus
+
+### Room Regulations
+- Rooms must be kept clean
+- No electrical cooking appliances allowed
+- Damage to property will be charged
+- Hosting guests overnight is prohibited
+- Pets not allowed
+
+### Mess Rules
+- Meal timings must be followed
+- Wastage of food is discouraged
+- Mess feedback can be submitted monthly
+- Special diet requests require prior approval
+
+## Anti-Ragging Policy
+
+### Zero Tolerance
+KL University has a strict anti-ragging policy in compliance with UGC regulations.
+
+### Definition of Ragging
+Any act that causes physical or psychological harm, creates fear, or humiliates a student.
+
+### Punishments
+- Expulsion from institution
+- Suspension for specified period
+- Withholding results/degree
+- Banning from hostels
+- Fine up to ₹1,00,000
+- Criminal proceedings as per law
+
+### Reporting
+- Anti-Ragging Helpline: 1800-180-5522
+- University Committee: antiragging@kluniversity.in
+- Anonymous complaints accepted
+
+## Code of Conduct
+
+### Academic Integrity
+- Plagiarism is strictly prohibited
+- All submissions must be original work
+- Proper citations required for references
+- Use of AI tools must be disclosed
+
+### Dress Code
+- Formal or semi-formal attire preferred
+- ID card must be worn at all times
+- Appropriate dress for laboratories
+- No offensive symbols or messages
+
+### Digital Conduct
+- Responsible use of internet and social media
+- No cyberbullying or harassment
+- Confidentiality of university data
+- Proper use of university email
+
+### Disciplinary Actions
+- Written warning
+- Suspension from classes
+- Withholding grades
+- Expulsion in severe cases
+- Fine as applicable
+
+## Academic Calendar Overview
+
+### Odd Semester (July - December)
+- Classes begin: Last week of July
+- Mid-term exams: October
+- End-semester exams: December
+- Results: January
+
+### Even Semester (January - May)
+- Classes begin: January second week
+- Mid-term exams: March
+- End-semester exams: May
+- Results: June
+
+### Summer Term
+- Duration: May-June (for repeat courses)
+- Limited courses offered
+- Intensive schedule
+
+## Contact for Academic Queries
+
+**Controller of Examinations**: coe@kluniversity.in
+**Academic Section**: academics@kluniversity.in
+**Student Affairs**: studentaffairs@kluniversity.in
+**Hostel Warden**: hostel@kluniversity.in

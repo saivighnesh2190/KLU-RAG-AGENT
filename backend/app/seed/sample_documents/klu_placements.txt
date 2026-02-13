@@ -1,0 +1,208 @@
+# KL University - Training & Placements
+
+## Overview
+
+KL University has a dedicated Training & Placement Cell that works year-round to ensure excellent career opportunities for students. The cell facilitates campus recruitment, internships, and industry interactions.
+
+## Placement Statistics (2023-24)
+
+### Overall Performance
+- **Total Eligible Students**: 2,500+
+- **Students Placed**: 2,200+ (88% placement rate)
+- **Total Offers**: 3,500+ (including multiple offers)
+- **Companies Visited**: 350+
+- **Dream Companies**: 50+
+
+### Package Details
+- **Highest Package**: ₹54 LPA (Google)
+- **Average Package**: ₹6.8 LPA
+- **Median Package**: ₹5.5 LPA
+- **Super Dream Offers (>15 LPA)**: 150+
+- **Dream Offers (8-15 LPA)**: 400+
+
+### Department-wise Placements
+| Department | Placement % | Avg Package |
+|------------|-------------|-------------|
+| CSE        | 95%         | ₹8.2 LPA    |
+| IT         | 92%         | ₹7.5 LPA    |
+| AI&DS      | 94%         | ₹8.5 LPA    |
+| ECE        | 85%         | ₹5.8 LPA    |
+| EEE        | 82%         | ₹5.2 LPA    |
+| Mechanical | 78%         | ₹4.8 LPA    |
+| Civil      | 75%         | ₹4.5 LPA    |
+| MBA        | 88%         | ₹7.2 LPA    |
+
+## Top Recruiters
+
+### IT & Software
+- Google
+- Microsoft
+- Amazon
+- Adobe
+- Oracle
+- SAP Labs
+- Salesforce
+- ServiceNow
+- VMware
+- Uber
+
+### IT Services
+- TCS (Largest recruiter - 300+ offers)
+- Infosys
+- Wipro
+- HCL Technologies
+- Tech Mahindra
+- Cognizant
+- Capgemini
+- Accenture
+- LTIMindtree
+- Mphasis
+
+### Product Companies
+- PayPal
+- Intuit
+- Cisco
+- Dell Technologies
+- Samsung R&D
+- Qualcomm
+- NVIDIA
+- AMD
+- Intel
+
+### Core Engineering
+- L&T
+- Tata Steel
+- JSW Steel
+- Vedanta
+- Reliance Industries
+- BHEL
+- ONGC
+- IOCL
+
+### Consulting & Finance
+- Deloitte
+- EY
+- KPMG
+- Goldman Sachs
+- Morgan Stanley
+- JP Morgan
+
+### Startups
+- Swiggy
+- Zomato
+- PhonePe
+- Razorpay
+- CRED
+- Zepto
+- Meesho
+
+## Placement Process
+
+### Timeline
+- **August-September**: Pre-placement talks and registration
+- **October-November**: Dream company drives (>8 LPA)
+- **December-January**: Regular company drives
+- **February-March**: Off-campus and mass recruiters
+- **April-May**: Final phase recruitment
+
+### Eligibility Criteria
+- No active backlogs at the time of placement
+- Minimum 60% aggregate (may vary by company)
+- No disciplinary issues
+- Completion of pre-placement training
+
+### Selection Process (Typical)
+1. **Online Test**: Aptitude, Technical, Coding
+2. **Technical Interview**: 1-2 rounds
+3. **HR Interview**: Final round
+4. **Offer Letter**: Within 2-4 weeks
+
+## Pre-Placement Training (PPT)
+
+### Training Modules
+- **Aptitude Training**: Quantitative, Logical, Verbal
+- **Technical Training**: Programming, DSA, DBMS, OS
+- **Soft Skills**: Communication, presentation, GD
+- **Mock Interviews**: Multiple rounds with industry experts
+- **Coding Practice**: HackerRank, LeetCode, CodeChef
+
+### Certification Programs
+- AWS Cloud Practitioner
+- Microsoft Azure Fundamentals
+- Google Cloud Associate
+- Salesforce Administrator
+- SAP ABAP/HANA
+
+### Industry Collaborations
+- IBM Skills Network
+- Oracle Academy
+- Cisco Networking Academy
+- Red Hat Academy
+- NASSCOM FutureSkills
+
+## Internship Program
+
+### Summer Internships
+- Duration: 6-8 weeks (May-July)
+- Stipend: ₹10,000 - ₹80,000/month
+- 80% conversion rate to full-time offers
+
+### Semester Internships
+- For final year students (6 months)
+- Work from office or hybrid
+- Major recruiters: TCS, Infosys, Wipro
+
+### International Internships
+- Programs in USA, Germany, Singapore
+- University exchange programs
+- Research internships at global universities
+
+## Entrepreneurship Support
+
+### E-Cell Activities
+- Startup bootcamps
+- Pitch competitions
+- Mentorship programs
+- Seed funding assistance
+
+### Successful Startups by Alumni
+- 50+ startups founded
+- ₹100+ crore funding raised collectively
+- Recognition at national startup competitions
+
+## Alumni Network
+
+### Notable Alumni
+- Tech leads at FAANG companies
+- Founders of successful startups
+- Senior executives in Fortune 500 companies
+- Researchers at top global universities
+
+### Alumni Engagement
+- Mentorship programs
+- Guest lectures
+- Referral hiring
+- Alumni meets
+
+## Contact Information
+
+**Training & Placement Officer**: placement@kluniversity.in
+**Phone**: 0863-2399999 ext. 8001
+**Location**: Admin Block, 2nd Floor
+**Timing**: 9:00 AM - 5:00 PM (Mon-Fri)
+
+## Important Links
+- Career Portal: careers.kluniversity.in
+- LinkedIn Page: linkedin.com/school/kluniversity
+- Resume Builder: Available on student portal
+
+## Tips for Students
+
+1. **Start Early**: Begin preparation from 2nd year
+2. **Build Projects**: Showcase on GitHub portfolio
+3. **Practice Coding**: Solve 300+ problems on coding platforms
+4. **Get Certified**: Industry certifications add value
+5. **Network**: Connect with alumni and industry professionals
+6. **Internships Matter**: Secure internships for experience
+7. **Soft Skills**: Communication is as important as technical skills
+8. **Stay Updated**: Follow industry trends and emerging technologies

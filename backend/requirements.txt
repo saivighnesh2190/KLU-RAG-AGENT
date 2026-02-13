@@ -1,0 +1,32 @@
+# FastAPI and Server
+fastapi>=0.109.0
+uvicorn[standard]>=0.25.0
+python-multipart>=0.0.6
+
+# LangChain
+langchain>=0.1.0
+langchain-community>=0.0.13
+langchain-google-genai>=0.0.6
+langchain-openai>=0.0.3
+langchain-text-splitters>=0.0.1
+
+# Vector Store
+chromadb>=0.4.22
+
+# Database
+sqlalchemy>=2.0.25
+
+# Data validation
+pydantic>=2.5.3
+pydantic-settings>=2.1.0
+
+# Utilities
+python-dotenv>=1.0.0
+httpx>=0.26.0
+
+# Document processing
+pypdf>=3.17.0
+PyMuPDF>=1.23.0
+
+# Utilities
+uuid6>=2024.1.12
