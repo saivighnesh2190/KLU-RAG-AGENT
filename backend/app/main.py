@@ -99,10 +99,10 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(health_router, prefix="/api")
-app.include_router(chat_router, prefix="/api")
-app.include_router(documents_router, prefix="/api")
-app.include_router(admin_router, prefix="/api")
+app.include_router(health_router, prefix="")
+app.include_router(chat_router, prefix="")
+app.include_router(documents_router, prefix="")
+app.include_router(admin_router, prefix="")
 
 
 @app.get("/")
