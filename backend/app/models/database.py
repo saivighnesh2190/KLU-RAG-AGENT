@@ -2,8 +2,7 @@
 SQLAlchemy database configuration
 """
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from typing import Generator
 
 from app.config import settings
@@ -12,14 +11,16 @@ from app.config import settings
 engine = create_engine(
     settings.DATABASE_URL,
     connect_args={"check_same_thread": False} if "sqlite" in settings.DATABASE_URL else {},
-    echo=settings.DEBUG,
+    echo=False,  # Disable SQL echo to reduce log noise
 )
 
 # Create session factory
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Create base class for models
-Base = declarative_base()
+# Create base class for models (SQLAlchemy 2.0 pattern)
+class Base(DeclarativeBase):
+    pass
+
 
 
 def get_db() -> Generator:

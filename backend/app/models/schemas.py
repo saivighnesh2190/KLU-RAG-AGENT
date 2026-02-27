@@ -3,7 +3,7 @@ Pydantic schemas for API request/response models
 """
 from pydantic import BaseModel, Field
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 # ============== Chat Schemas ==============
@@ -27,7 +27,7 @@ class ChatResponse(BaseModel):
     sources: List[SourceInfo] = Field(default=[], description="Sources used for the response")
     session_id: str = Field(..., description="Chat session ID")
     response_time: float = Field(..., description="Response time in seconds")
-    timestamp: datetime = Field(default_factory=datetime.utcnow, description="Response timestamp")
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), description="Response timestamp")
 
 
 class ChatMessage(BaseModel):
@@ -35,14 +35,14 @@ class ChatMessage(BaseModel):
     role: str = Field(..., description="Message role: 'user' or 'assistant'")
     content: str = Field(..., description="Message content")
     sources: List[SourceInfo] = Field(default=[], description="Sources (for assistant messages)")
-    timestamp: datetime = Field(default_factory=datetime.utcnow, description="Message timestamp")
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), description="Message timestamp")
 
 
 class ChatSession(BaseModel):
     """A chat session with history"""
     session_id: str = Field(..., description="Session ID")
     messages: List[ChatMessage] = Field(default=[], description="Message history")
-    created_at: datetime = Field(default_factory=datetime.utcnow, description="Session creation time")
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), description="Session creation time")
     title: Optional[str] = Field(default=None, description="Session title (first message)")
 
 

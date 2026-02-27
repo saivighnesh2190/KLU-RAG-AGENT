@@ -2,10 +2,43 @@
 LLM Provider Factory
 Supports OpenAI and Google Gemini models
 """
-from typing import Optional
+import time
+import logging
+import functools
+from typing import Optional, Any
 from langchain_core.language_models.base import BaseLanguageModel
 from langchain_core.embeddings import Embeddings
 from app.config import settings
+
+logger = logging.getLogger(__name__)
+
+def retry_with_backoff(func):
+    """
+    Decorator to retry functions with exponential backoff on 429 errors.
+    Useful for Gemini API free tier rate limits.
+    """
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        max_retries = 3
+        base_delay = 2  # seconds
+        
+        for attempt in range(max_retries + 1):
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                error_str = str(e).lower()
+                if "429" in error_str or "resource_exhausted" in error_str or "quota" in error_str:
+                    if attempt == max_retries:
+                        logger.error(f"Max retries reached for LLM API call: {e}")
+                        raise e
+                    
+                    delay = base_delay * (2 ** attempt)  # 2s, 4s, 8s
+                    logger.warning(f"Rate limit hit (429). Retrying in {delay}s... (Attempt {attempt + 1}/{max_retries})")
+                    time.sleep(delay)
+                else:
+                    raise e
+    return wrapper
+
 
 
 def get_llm(temperature: float = 0.7) -> BaseLanguageModel:
@@ -46,7 +79,7 @@ def get_llm(temperature: float = 0.7) -> BaseLanguageModel:
         return ChatGoogleGenerativeAI(
             model=settings.GEMINI_MODEL,
             temperature=temperature,
-            google_api_key=settings.GOOGLE_API_KEY,
+            api_key=settings.GOOGLE_API_KEY,
         )
     
     else:
@@ -70,7 +103,7 @@ def get_embeddings() -> Embeddings:
         from langchain_google_genai import GoogleGenerativeAIEmbeddings
         return GoogleGenerativeAIEmbeddings(
             model="models/embedding-001",
-            google_api_key=settings.GOOGLE_API_KEY,
+            api_key=settings.GOOGLE_API_KEY,
         )
     else:
         from langchain_openai import OpenAIEmbeddings

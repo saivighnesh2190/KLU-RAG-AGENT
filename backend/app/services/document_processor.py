@@ -2,6 +2,7 @@
 Document Processor Service
 Handles PDF and text file parsing with chunking for vector storage
 """
+import logging
 import os
 import uuid
 from datetime import datetime
@@ -9,9 +10,11 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional, Tuple
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
-import PyPDF2
+import pypdf
 import fitz  # PyMuPDF
 from app.config import settings
+
+logger = logging.getLogger(__name__)
 
 
 class DocumentProcessor:
@@ -133,9 +136,9 @@ class DocumentProcessor:
             if file_content:
                 import io
                 pdf_file = io.BytesIO(file_content)
-                reader = PyPDF2.PdfReader(pdf_file)
+                reader = pypdf.PdfReader(pdf_file)
             else:
-                reader = PyPDF2.PdfReader(file_path)
+                reader = pypdf.PdfReader(file_path)
             
             for page_num, page in enumerate(reader.pages, 1):
                 page_text = page.extract_text()
@@ -212,6 +215,6 @@ class DocumentProcessor:
                     docs, metadata = self.process_file(str(file_path))
                     results.append((docs, metadata))
                 except Exception as e:
-                    print(f"Error processing {file_path}: {e}")
+                    logger.warning(f"Error processing {file_path}: {e}")
         
         return results

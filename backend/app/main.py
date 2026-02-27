@@ -1,6 +1,7 @@
 """
 FastAPI Application Entry Point
 """
+import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,6 +9,8 @@ from app.config import settings
 from app.models.database import init_db
 from app.routers import health_router, chat_router, documents_router, admin_router
 from app import __version__
+
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
@@ -17,10 +20,10 @@ async def lifespan(app: FastAPI):
     Runs on startup and shutdown.
     """
     # Startup
-    print("🚀 Starting KLU Agent Backend...")
+    logger.info("🚀 Starting KLU Agent Backend...")
     
     # Initialize database
-    print("📦 Initializing database...")
+    logger.info("📦 Initializing database...")
     init_db()
     
     # Auto-ingest sample documents if vector store is empty
@@ -32,7 +35,7 @@ async def lifespan(app: FastAPI):
         vector_store = VectorStoreService()
         
         if vector_store.is_empty():
-            print("📄 Vector store is empty. Ingesting sample documents...")
+            logger.info("📄 Vector store is empty. Ingesting sample documents...")
             sample_docs_dir = Path(__file__).parent / "seed" / "sample_documents"
             
             if sample_docs_dir.exists():
@@ -43,26 +46,26 @@ async def lifespan(app: FastAPI):
                         try:
                             documents, metadata = processor.process_file(str(file_path))
                             vector_store.add_documents(documents)
-                            print(f"  ✓ Ingested: {file_path.name}")
+                            logger.info(f"  ✓ Ingested: {file_path.name}")
                         except Exception as e:
-                            print(f"  ✗ Error ingesting {file_path.name}: {e}")
+                            logger.warning(f"  ✗ Error ingesting {file_path.name}: {e}")
             else:
-                print("  ⚠ Sample documents directory not found")
+                logger.warning("  ⚠ Sample documents directory not found")
         else:
             stats = vector_store.get_collection_stats()
-            print(f"📄 Vector store has {stats['total_documents']} documents ({stats['total_chunks']} chunks)")
+            logger.info(f"📄 Vector store has {stats['total_documents']} documents ({stats['total_chunks']} chunks)")
     
     except Exception as e:
-        print(f"⚠ Error during startup: {e}")
+        logger.warning(f"⚠ Error during startup: {e}")
     
-    print(f"✅ KLU Agent Backend v{__version__} is ready!")
-    print(f"📡 Server: http://{settings.HOST}:{settings.PORT}")
-    print(f"📚 Docs: http://{settings.HOST}:{settings.PORT}/docs")
+    logger.info(f"✅ KLU Agent Backend v{__version__} is ready!")
+    logger.info(f"📡 Server: http://{settings.HOST}:{settings.PORT}")
+    logger.info(f"📚 Docs: http://{settings.HOST}:{settings.PORT}/docs")
     
     yield
     
     # Shutdown
-    print("👋 Shutting down KLU Agent Backend...")
+    logger.info("👋 Shutting down KLU Agent Backend...")
 
 
 # Create FastAPI application

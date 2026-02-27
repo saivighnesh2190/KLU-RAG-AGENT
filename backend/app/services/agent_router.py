@@ -114,7 +114,15 @@ class AgentRouter:
             
             if "database" in data_sources:
                 db_result = self._query_database(query)
-                if "failed" not in db_result.lower():
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.info(f"DB Result: {db_result[:200]}...")
+                
+                # Query database returns the answer string directly if success=True, 
+                # or an error string if success=False. 
+                # We can't easily check success here without changing _query_database signature,
+                # but we can check if it looks like a failure message we generate.
+                if not db_result.startswith("Database query failed:"):
                     context_parts.append(f"🗃️ From Database:\n{db_result}")
                     sources_list.append({
                         "type": "database",
@@ -124,31 +132,37 @@ class AgentRouter:
             
             # Generate final answer using LLM
             if context_parts:
-                llm = get_llm(temperature=0.3)
-                
-                prompt = ChatPromptTemplate.from_messages([
-                    ("system", """You are KLU Agent, the official AI assistant for KL University.
-Your job is to provide helpful, accurate answers based on the context provided.
-
-Guidelines:
-- Be polite, professional, and concise
-- Use the context information to answer the question
-- If the context doesn't contain relevant information, say so
-- Use markdown formatting when appropriate (headers, bullet points, tables)
-- Don't make up information that isn't in the context"""),
-                    ("human", """Context information:
-{context}
-
-Question: {query}
-
-Provide a helpful answer based on the context above:""")
-                ])
-                
-                chain = prompt | llm | StrOutputParser()
-                answer = chain.invoke({
-                    "context": "\n\n".join(context_parts),
-                    "query": query
-                })
+                # OPTIMIZATION: If we only have database result and it's a direct answer, 
+                # return it directly to save LLM calls (and avoid rate limits)
+                if len(sources_list) == 1 and sources_list[0]["type"] == "database":
+                    logger.info("Directly returning database result to save LLM call")
+                    answer = context_parts[0].replace("🗃️ From Database:\n", "").strip()
+                else:
+                    llm = get_llm(temperature=0.3)
+                    
+                    prompt = ChatPromptTemplate.from_messages([
+                        ("system", """You are KLU Agent, the official AI assistant for KL University.
+    Your job is to provide helpful, accurate answers based on the context provided.
+    
+    Guidelines:
+    - Be polite, professional, and concise
+    - Use the context information to answer the question
+    - If the context doesn't contain relevant information, say so
+    - Use markdown formatting when appropriate (headers, bullet points, tables)
+    - Don't make up information that isn't in the context"""),
+                        ("human", """Context information:
+    {context}
+    
+    Question: {query}
+    
+    Provide a helpful answer based on the context above:""")
+                    ])
+                    
+                    chain = prompt | llm | StrOutputParser()
+                    answer = chain.invoke({
+                        "context": "\n\n".join(context_parts),
+                        "query": query
+                    })
             else:
                 answer = "I don't have information about that in my knowledge base. Please contact the administration for assistance."
             

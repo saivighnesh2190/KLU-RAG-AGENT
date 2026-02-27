@@ -2,6 +2,7 @@
 Admin Router
 Endpoints for admin functionality
 """
+import logging
 import time
 from fastapi import APIRouter, HTTPException
 from app.models.schemas import DatabaseStats, TableStats, SystemInfo
@@ -12,6 +13,8 @@ from app.models.college_models import (
 from app.services.vector_store import VectorStoreService
 from app.services.llm_provider import get_llm_info
 from app.config import settings
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
@@ -26,9 +29,8 @@ async def get_database_stats():
     
     Returns row counts for each table.
     """
+    db = SessionLocal()
     try:
-        db = SessionLocal()
-        
         tables = [
             ("students", Student),
             ("faculty", Faculty),
@@ -50,18 +52,19 @@ async def get_database_stats():
             ))
             total_rows += count
         
-        db.close()
-        
         return DatabaseStats(
             tables=table_stats,
             total_rows=total_rows,
         )
     
     except Exception as e:
+        logger.error(f"Error getting database stats: {e}")
         raise HTTPException(
             status_code=500,
             detail=f"Error getting database stats: {str(e)}",
         )
+    finally:
+        db.close()
 
 
 @router.get("/system-info", response_model=SystemInfo)
@@ -71,6 +74,7 @@ async def get_system_info():
     
     Returns LLM provider, embedding model, and other system details.
     """
+    db = SessionLocal()
     try:
         # Get LLM info
         llm_info = get_llm_info()
@@ -79,10 +83,10 @@ async def get_system_info():
         vector_store = VectorStoreService()
         vs_stats = vector_store.get_collection_stats()
         
-        # Count database tables
-        db = SessionLocal()
-        table_count = 7  # We have 7 tables
-        db.close()
+        # Dynamically count database tables
+        from sqlalchemy import inspect
+        inspector = inspect(db.bind)
+        table_count = len(inspector.get_table_names())
         
         # Calculate uptime
         uptime = time.time() - _server_start_time
@@ -98,10 +102,13 @@ async def get_system_info():
         )
     
     except Exception as e:
+        logger.error(f"Error getting system info: {e}")
         raise HTTPException(
             status_code=500,
             detail=f"Error getting system info: {str(e)}",
         )
+    finally:
+        db.close()
 
 
 @router.post("/seed-documents")
@@ -135,7 +142,7 @@ async def seed_sample_documents():
                     vector_store.add_documents(documents)
                     ingested.append(metadata["name"])
                 except Exception as e:
-                    print(f"Error ingesting {file_path}: {e}")
+                    logger.warning(f"Error ingesting {file_path}: {e}")
         
         return {
             "success": True,

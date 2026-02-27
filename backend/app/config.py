@@ -72,12 +72,17 @@ class Settings(BaseSettings):
     
     def ensure_directories(self):
         """Create necessary directories if they don't exist"""
-        self.data_dir.mkdir(parents=True, exist_ok=True)
-        self.documents_dir.mkdir(parents=True, exist_ok=True)
-        self.chroma_dir.mkdir(parents=True, exist_ok=True)
+        import logging
+        logger = logging.getLogger(__name__)
+        try:
+            self.data_dir.mkdir(parents=True, exist_ok=True)
+            self.documents_dir.mkdir(parents=True, exist_ok=True)
+            self.chroma_dir.mkdir(parents=True, exist_ok=True)
+        except Exception as e:
+            logger.error(f"Failed to create required directories: {e}")
     
     class Config:
-        env_file = ".env"
+        env_file = str(BACKEND_DIR / ".env")
         env_file_encoding = "utf-8"
         extra = "ignore"
 

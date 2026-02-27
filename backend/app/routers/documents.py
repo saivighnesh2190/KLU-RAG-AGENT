@@ -2,11 +2,17 @@
 Documents Router
 Endpoints for document management
 """
+import logging
 from fastapi import APIRouter, HTTPException, UploadFile, File
 from typing import List
 from app.models.schemas import DocumentInfo, DocumentStats, DocumentUploadResponse
 from app.services.document_processor import DocumentProcessor
 from app.services.vector_store import VectorStoreService
+
+logger = logging.getLogger(__name__)
+
+# Maximum upload size: 10 MB
+MAX_UPLOAD_SIZE = 10 * 1024 * 1024
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
 
@@ -30,12 +36,25 @@ async def upload_document(file: UploadFile = File(...)):
     if file_ext not in allowed_extensions:
         return DocumentUploadResponse(
             success=False,
-            message=f"Unsupported file type. Allowed: {', '.join(allowed_extensions)}",
+            message=f"Unsupported file type '{file_ext}'. Allowed formats: {', '.join(allowed_extensions)}",
         )
     
     try:
         # Read file content
         content = await file.read()
+        
+        # Validate file size
+        if len(content) > MAX_UPLOAD_SIZE:
+            return DocumentUploadResponse(
+                success=False,
+                message=f"File too large ({len(content) / (1024*1024):.1f} MB). Maximum size: {MAX_UPLOAD_SIZE / (1024*1024):.0f} MB.",
+            )
+        
+        if len(content) == 0:
+            return DocumentUploadResponse(
+                success=False,
+                message="File is empty. Please upload a file with content.",
+            )
         
         # Process document
         processor = DocumentProcessor()
@@ -51,6 +70,8 @@ async def upload_document(file: UploadFile = File(...)):
         vector_store = VectorStoreService()
         vector_store.add_documents(documents)
         
+        logger.info(f"Successfully uploaded document: {file.filename} ({len(content)} bytes, {metadata['chunk_count']} chunks)")
+        
         return DocumentUploadResponse(
             success=True,
             message=f"Successfully uploaded and processed {file.filename}",
@@ -64,9 +85,10 @@ async def upload_document(file: UploadFile = File(...)):
         )
     
     except Exception as e:
+        logger.error(f"Error processing uploaded document {file.filename}: {e}")
         return DocumentUploadResponse(
             success=False,
-            message=f"Error processing document: {str(e)}",
+            message=f"Failed to process document. Please check the file format and try again.",
         )
 
 

@@ -2,12 +2,96 @@
 SQL Agent Service
 LangChain SQL agent for natural language to SQL conversion
 """
+import time
+import logging
+import json
+import os
+import hashlib
+from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 from langchain_community.utilities import SQLDatabase
 from langchain_community.agent_toolkits import SQLDatabaseToolkit
 from langchain_community.agent_toolkits import create_sql_agent
 from app.config import settings
 from app.services.llm_provider import get_llm
+
+logger = logging.getLogger(__name__)
+
+CACHE_FILE = "sql_agent_cache.json"
+
+def get_cache_key(text: str) -> str:
+    """Generate a stable cache key for the query"""
+    return hashlib.md5(text.lower().strip().encode()).hexdigest()
+
+def load_cache() -> Dict[str, Any]:
+    """Load the cache from disk"""
+    if not os.path.exists(CACHE_FILE):
+        return {}
+    try:
+        with open(CACHE_FILE, "r") as f:
+            return json.load(f)
+    except Exception as e:
+        logger.error(f"Failed to load cache: {e}")
+        return {}
+
+def save_cache(cache: Dict[str, Any]):
+    """Save the cache to disk"""
+    try:
+        with open(CACHE_FILE, "w") as f:
+            json.dump(cache, f, indent=2)
+    except Exception as e:
+        logger.error(f"Failed to save cache: {e}")
+
+def get_cached_response(question: str) -> Optional[str]:
+    """Get response from cache if it exists and is not expired (24h)"""
+    cache = load_cache()
+    key = get_cache_key(question)
+    
+    if key in cache:
+        entry = cache[key]
+        # Check expiration (optional, say 24 hours)
+        # timestamp = datetime.fromisoformat(entry.get("timestamp"))
+        # if datetime.now() - timestamp < timedelta(hours=24):
+            # return entry["answer"]
+        return entry.get("answer")
+    return None
+
+def cache_response(question: str, answer: str):
+    """Save response to cache"""
+    cache = load_cache()
+    key = get_cache_key(question)
+    
+    cache[key] = {
+        "question": question,
+        "answer": answer,
+        "timestamp": datetime.now().isoformat()
+    }
+    save_cache(cache)
+
+
+def retry_with_backoff(func, *args, **kwargs):
+    """
+    Retry a function with exponential backoff on 429 errors.
+    """
+    max_retries = 5
+    base_delay = 2
+    
+    for attempt in range(max_retries + 1):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            error_str = str(e).lower()
+            if "429" in error_str or "resource_exhausted" in error_str or "quota" in error_str:
+                if attempt == max_retries:
+                    logger.error(f"Max retries reached: {e}")
+                    raise e
+                
+                delay = base_delay * (2 ** attempt)
+                logger.warning(f"Rate limit hit (429). Retrying in {delay}s... (Attempt {attempt + 1}/{max_retries})")
+                time.sleep(delay)
+            else:
+                raise e
+
 
 
 class SQLAgentService:
@@ -98,12 +182,28 @@ Common department names:
             Dict with answer and query information
         """
         try:
+            # Check cache first
+            cached_answer = get_cached_response(question)
+            if cached_answer:
+                logger.info(f"Serving cached response for: {question}")
+                return {
+                    "success": True,
+                    "answer": cached_answer,
+                    "source": "database_cache",
+                }
+
             agent = self._get_agent()
-            result = agent.invoke({"input": question})
+            result = retry_with_backoff(agent.invoke, {"input": question})
+            
+            answer = result.get("output", "No result found.")
+            
+            # Cache the successful result
+            if answer and "I don't know" not in answer and "Error" not in answer:
+                cache_response(question, answer)
             
             return {
                 "success": True,
-                "answer": result.get("output", "No result found."),
+                "answer": answer,
                 "source": "database",
             }
             

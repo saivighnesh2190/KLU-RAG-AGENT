@@ -54,3 +54,9 @@ data/
 # Logs
 logs/
 *.log
+
+# Cache files
+sql_agent_cache.json
+
+# Test scripts
+verify_persistence.py

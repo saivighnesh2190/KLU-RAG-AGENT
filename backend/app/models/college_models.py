@@ -126,5 +126,39 @@ class Facility(Base):
     contact = Column(String(100), nullable=True)
     description = Column(Text, nullable=True)
     
+    
     def __repr__(self):
         return f"<Facility(name='{self.facility_name}')>"
+
+class ChatSession(Base):
+    """Chat session model for persisting conversation history"""
+    __tablename__ = "chat_sessions"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    session_id = Column(String(36), unique=True, nullable=False, index=True)
+    title = Column(String(200), nullable=True)
+    created_at = Column(Text, nullable=False)  # ISO format string
+    
+    # Relationship with messages
+    messages = relationship("ChatMessage", back_populates="session", cascade="all, delete-orphan")
+    
+    def __repr__(self):
+        return f"<ChatSession(id='{self.session_id}')>"
+
+
+class ChatMessage(Base):
+    """Chat message model for persisting individual messages"""
+    __tablename__ = "chat_messages"
+    
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    session_id = Column(String(36), ForeignKey("chat_sessions.session_id"), nullable=False)
+    role = Column(String(20), nullable=False)  # 'user' or 'assistant'
+    content = Column(Text, nullable=False)
+    sources = Column(Text, nullable=True)  # JSON string of sources
+    timestamp = Column(Text, nullable=False)  # ISO format string
+    
+    # Relationship with session
+    session = relationship("ChatSession", back_populates="messages")
+    
+    def __repr__(self):
+        return f"<ChatMessage(role='{self.role}', session='{self.session_id}')>"
