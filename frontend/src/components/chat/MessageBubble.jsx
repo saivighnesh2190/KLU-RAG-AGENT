@@ -21,40 +21,43 @@ const MessageBubble = ({ message, isLast }) => {
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-6`}
         >
             <div
                 className={`flex items-start space-x-3 max-w-[85%] ${isUser ? 'flex-row-reverse space-x-reverse' : ''
                     }`}
             >
                 {/* Avatar */}
-                <div
-                    className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${isUser
-                            ? 'bg-primary-500'
-                            : 'bg-gradient-to-br from-primary-500 to-purple-500'
+                <motion.div
+                    whileHover={{ scale: 1.1, rotate: isUser ? -10 : 10 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                    className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center shadow-md ${isUser
+                        ? 'bg-gradient-to-br from-primary-500 to-primary-600'
+                        : 'bg-white border border-slate-200 shadow-sm'
                         }`}
                 >
                     {isUser ? (
                         <User size={16} className="text-white" />
                     ) : (
-                        <Bot size={16} className="text-white" />
+                        <Bot size={18} className="text-primary-500" />
                     )}
-                </div>
+                </motion.div>
 
                 {/* Message content */}
                 <div className={`flex flex-col ${isUser ? 'items-end' : 'items-start'}`}>
                     <div
-                        className={`rounded-2xl px-4 py-3 ${isUser
-                                ? 'bg-primary-500 text-white rounded-tr-sm'
-                                : 'glass rounded-tl-sm'
+                        className={`rounded-2xl px-5 py-4 shadow-sm font-medium ${isUser
+                            ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-tr-sm shadow-primary-500/20'
+                            : 'bg-white border border-slate-200/60 rounded-tl-sm shadow-slate-200/50'
                             }`}
                     >
                         {isUser ? (
-                            <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                            <p className="text-[15px] whitespace-pre-wrap leading-relaxed">{message.content}</p>
                         ) : (
-                            <div className="prose prose-sm max-w-none text-dark-100">
+                            <div className="prose prose-slate prose-sm max-w-none prose-p:leading-relaxed prose-pre:my-2 prose-pre:bg-slate-50 prose-pre:border prose-pre:border-slate-200">
                                 <ReactMarkdown
                                     remarkPlugins={[remarkGfm]}
                                     components={{
@@ -62,13 +65,13 @@ const MessageBubble = ({ message, isLast }) => {
                                         code({ node, inline, className, children, ...props }) {
                                             return inline ? (
                                                 <code
-                                                    className="bg-dark-800 px-1.5 py-0.5 rounded text-primary-300 text-xs"
+                                                    className="bg-slate-100 px-1.5 py-0.5 rounded-md text-primary-700 text-[13px] border border-slate-200/60 font-medium"
                                                     {...props}
                                                 >
                                                     {children}
                                                 </code>
                                             ) : (
-                                                <pre className="bg-dark-900 rounded-lg p-3 overflow-x-auto">
+                                                <pre className="bg-slate-50 rounded-xl p-4 overflow-x-auto shadow-inner border border-slate-200/80">
                                                     <code className={className} {...props}>
                                                         {children}
                                                     </code>
@@ -80,7 +83,7 @@ const MessageBubble = ({ message, isLast }) => {
                                             return (
                                                 <a
                                                     {...props}
-                                                    className="text-primary-400 hover:text-primary-300 underline"
+                                                    className="text-primary-600 hover:text-primary-700 underline font-semibold transition-colors"
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                 />
@@ -89,7 +92,7 @@ const MessageBubble = ({ message, isLast }) => {
                                         // Custom tables
                                         table({ node, ...props }) {
                                             return (
-                                                <div className="overflow-x-auto my-2">
+                                                <div className="overflow-x-auto my-3 rounded-lg border border-slate-200 shadow-sm bg-white">
                                                     <table className="min-w-full" {...props} />
                                                 </div>
                                             );
@@ -104,26 +107,26 @@ const MessageBubble = ({ message, isLast }) => {
 
                     {/* Sources and metadata for assistant messages */}
                     {!isUser && (
-                        <>
+                        <div className="mt-2 pl-1 w-full flex flex-col items-start">
                             <SourceCard sources={message.sources} />
 
-                            <div className="flex items-center space-x-3 mt-2 text-xs text-dark-500">
+                            <div className="flex items-center space-x-3 mt-2 text-xs text-slate-400 font-medium">
                                 {message.response_time && (
-                                    <div className="flex items-center space-x-1">
-                                        <Zap size={12} className="text-yellow-400" />
+                                    <div className="flex items-center space-x-1.5 bg-white/60 px-2 py-1 rounded-md border border-slate-200/50">
+                                        <Zap size={12} className="text-amber-500 fill-amber-500/20" />
                                         <span>{formatResponseTime(message.response_time)}</span>
                                     </div>
                                 )}
 
                                 <button
                                     onClick={handleCopy}
-                                    className="flex items-center space-x-1 hover:text-dark-300 transition-colors"
+                                    className="flex items-center space-x-1.5 hover:text-slate-600 transition-colors bg-white/60 px-2 py-1 rounded-md border border-slate-200/50 hover:bg-slate-50"
                                     title="Copy response"
                                 >
                                     {copied ? (
                                         <>
-                                            <Check size={12} className="text-green-400" />
-                                            <span className="text-green-400">Copied!</span>
+                                            <Check size={12} className="text-emerald-500" />
+                                            <span className="text-emerald-600">Copied!</span>
                                         </>
                                     ) : (
                                         <>
@@ -133,7 +136,7 @@ const MessageBubble = ({ message, isLast }) => {
                                     )}
                                 </button>
                             </div>
-                        </>
+                        </div>
                     )}
                 </div>
             </div>

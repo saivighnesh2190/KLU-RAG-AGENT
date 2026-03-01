@@ -110,6 +110,7 @@ class RAGService:
                     type=s.get("type", "unknown"),
                     name=s.get("name", "Unknown"),
                     snippet=s.get("snippet", ""),
+                    score=float(s.get("score", 0.0)),
                 )
                 for s in result.get("sources", [])
             ]

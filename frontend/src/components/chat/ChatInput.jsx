@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const ChatInput = ({ onSend, isLoading, disabled }) => {
     const [message, setMessage] = useState('');
@@ -19,6 +20,10 @@ const ChatInput = ({ onSend, isLoading, disabled }) => {
         if (message.trim() && !isLoading && !disabled) {
             onSend(message.trim());
             setMessage('');
+            // Reset height after send
+            if (textareaRef.current) {
+                textareaRef.current.style.height = 'auto';
+            }
         }
     };
 
@@ -30,9 +35,17 @@ const ChatInput = ({ onSend, isLoading, disabled }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="sticky bottom-0 p-4 glass border-t border-dark-700">
-            <div className="max-w-4xl mx-auto">
-                <div className="relative flex items-end space-x-3">
+        <form onSubmit={handleSubmit} className="relative z-20 w-full mb-6 relative">
+            {/* Glow backing for input */}
+            <div className="absolute inset-x-0 -top-8 bottom-0 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none rounded-b-2xl blur-md -z-10" />
+
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: "easeOut", delay: 0.1 }}
+                className="max-w-4xl mx-auto glass-glow rounded-2xl shadow-lg border-slate-200/80 p-2"
+            >
+                <div className="relative flex items-end space-x-3 bg-white/50 rounded-xl p-1 shadow-inner border border-slate-100">
                     {/* Input area */}
                     <div className="flex-1 relative">
                         <textarea
@@ -40,40 +53,53 @@ const ChatInput = ({ onSend, isLoading, disabled }) => {
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder="Ask anything about KLU..."
+                            placeholder="Ask anything about the campus..."
                             disabled={isLoading || disabled}
                             rows={1}
-                            className="w-full px-4 py-3 pr-12 rounded-xl bg-dark-800 border border-dark-600 text-white placeholder-dark-400 resize-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            className="w-full px-4 py-3.5 pr-14 rounded-xl bg-transparent border-none text-slate-700 placeholder-slate-400 resize-none focus:ring-0 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-[15px] font-medium leading-relaxed"
+                            style={{ boxShadow: 'none' }}
                         />
 
                         {/* Character count hint */}
                         {message.length > 500 && (
-                            <span className="absolute right-14 bottom-3 text-xs text-dark-500">
+                            <span className="absolute right-3 bottom-3 text-[10px] font-semibold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
                                 {message.length}/2000
                             </span>
                         )}
                     </div>
 
                     {/* Send button */}
-                    <button
-                        type="submit"
-                        disabled={!message.trim() || isLoading || disabled}
-                        className="flex-shrink-0 p-3 rounded-xl bg-primary-500 hover:bg-primary-600 disabled:bg-dark-700 disabled:text-dark-500 text-white transition-all glow-hover disabled:shadow-none"
-                        title="Send message"
-                    >
-                        {isLoading ? (
-                            <Loader2 size={20} className="animate-spin" />
-                        ) : (
-                            <Send size={20} />
-                        )}
-                    </button>
+                    <div className="pb-1 pr-1">
+                        <motion.button
+                            type="submit"
+                            whileHover={!(isLoading || disabled || !message.trim()) ? { scale: 1.05 } : {}}
+                            whileTap={!(isLoading || disabled || !message.trim()) ? { scale: 0.95 } : {}}
+                            disabled={!message.trim() || isLoading || disabled}
+                            className={`flex-shrink-0 p-3 rounded-xl transition-all shadow-md ${!message.trim() || isLoading || disabled
+                                    ? 'bg-slate-100 text-slate-400 shadow-none border border-slate-200'
+                                    : 'bg-gradient-to-br from-primary-500 to-primary-600 hover:from-primary-400 hover:to-primary-500 text-white shadow-primary-500/30 glow-primary-hover border border-primary-400/50'
+                                }`}
+                            title="Send message"
+                        >
+                            {isLoading ? (
+                                <Loader2 size={20} className="animate-spin" />
+                            ) : (
+                                <Send size={20} className={!message.trim() ? "opacity-50" : ""} />
+                            )}
+                        </motion.button>
+                    </div>
                 </div>
+            </motion.div>
 
-                {/* Helper text */}
-                <p className="text-xs text-dark-500 mt-2 text-center">
-                    Press Enter to send, Shift+Enter for new line
-                </p>
-            </div>
+            {/* Helper text */}
+            <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="text-[11px] font-medium text-slate-400 mt-2.5 text-center tracking-wide uppercase"
+            >
+                Press <span className="text-slate-500 bg-white shadow-sm border border-slate-200 px-1.5 py-0.5 rounded">Enter</span> to send, <span className="text-slate-500 bg-white shadow-sm border border-slate-200 px-1.5 py-0.5 rounded">Shift+Enter</span> for new line
+            </motion.p>
         </form>
     );
 };

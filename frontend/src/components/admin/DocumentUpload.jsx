@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, File, X, Check, AlertCircle, Loader2 } from 'lucide-react';
 import { formatFileSize, isFileAllowed, parseErrorMessage } from '../../utils/helpers';
 import { FILE_UPLOAD } from '../../utils/constants';
@@ -89,15 +89,17 @@ const DocumentUpload = ({ onUploadSuccess }) => {
     };
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-6">
             {/* Drop zone */}
-            <div
+            <motion.div
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all ${isDragging
-                        ? 'border-primary-400 bg-primary-500/10'
-                        : 'border-dark-600 hover:border-dark-500'
+                className={`relative border-2 border-dashed rounded-2xl p-10 text-center transition-all duration-300 ${isDragging
+                    ? 'border-primary-400 bg-primary-50 scale-105 shadow-md shadow-primary-500/10'
+                    : 'border-slate-300 bg-white/50 hover:border-primary-300 hover:bg-slate-50 hover:shadow-sm'
                     }`}
             >
                 <input
@@ -105,64 +107,110 @@ const DocumentUpload = ({ onUploadSuccess }) => {
                     multiple
                     accept={FILE_UPLOAD.ALLOWED_EXTENSIONS.join(',')}
                     onChange={handleFileSelect}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                 />
 
-                <Upload
-                    size={40}
-                    className={`mx-auto mb-4 ${isDragging ? 'text-primary-400' : 'text-dark-400'}`}
-                />
+                <motion.div
+                    animate={isDragging ? { y: -10 } : { y: 0 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                >
+                    <div className={`mx-auto w-20 h-20 mb-5 rounded-full flex items-center justify-center shadow-inner transition-colors ${isDragging ? 'bg-primary-100 text-primary-600' : 'bg-slate-100 text-slate-400'
+                        }`}>
+                        <Upload size={32} />
+                    </div>
+                </motion.div>
 
-                <p className="text-dark-200 font-medium">
+                <p className="text-slate-700 font-bold text-lg">
                     Drag and drop files here
                 </p>
-                <p className="text-dark-400 text-sm mt-1">
+                <p className="text-slate-500 font-medium mt-1 mb-4">
                     or click to browse
                 </p>
-                <p className="text-dark-500 text-xs mt-3">
-                    Supported: PDF, TXT, MD (Max {FILE_UPLOAD.MAX_SIZE_MB}MB)
-                </p>
-            </div>
+
+                <div className="inline-flex items-center space-x-2 bg-slate-100 text-slate-500 font-medium text-xs px-3 py-1.5 rounded-lg border border-slate-200">
+                    <span className="w-2 h-2 rounded-full bg-blue-400"></span>
+                    <span>Supported: PDF, TXT, MD</span>
+                    <span className="mx-1 text-slate-300">|</span>
+                    <span>Max: {FILE_UPLOAD.MAX_SIZE_MB}MB</span>
+                </div>
+            </motion.div>
 
             {/* Uploading files list */}
-            {uploadingFiles.length > 0 && (
-                <div className="space-y-2">
-                    {uploadingFiles.map((file) => (
-                        <motion.div
-                            key={file.id}
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="flex items-center justify-between p-3 rounded-lg bg-dark-800 border border-dark-700"
-                        >
-                            <div className="flex items-center space-x-3">
-                                <File size={20} className="text-dark-400" />
-                                <div>
-                                    <p className="text-sm text-white">{file.name}</p>
-                                    <p className="text-xs text-dark-400">{formatFileSize(file.size)}</p>
+            <AnimatePresence>
+                {uploadingFiles.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="space-y-3 mt-6"
+                    >
+                        <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3">Upload Status</h3>
+                        {uploadingFiles.map((file) => (
+                            <motion.div
+                                key={file.id}
+                                layout
+                                initial={{ opacity: 0, x: -20, scale: 0.95 }}
+                                animate={{ opacity: 1, x: 0, scale: 1 }}
+                                exit={{ opacity: 0, x: 20, scale: 0.95 }}
+                                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                                className={`flex items-center justify-between p-4 rounded-xl border shadow-sm transition-colors ${file.status === 'success' ? 'bg-emerald-50 border-emerald-200' :
+                                        file.status === 'error' ? 'bg-red-50 border-red-200' :
+                                            'bg-white border-slate-200'
+                                    }`}
+                            >
+                                <div className="flex items-center space-x-4">
+                                    <div className={`p-2.5 rounded-lg ${file.status === 'success' ? 'bg-emerald-100 text-emerald-600' :
+                                            file.status === 'error' ? 'bg-red-100 text-red-600' :
+                                                'bg-slate-100 text-slate-500'
+                                        }`}>
+                                        <File size={20} />
+                                    </div>
+                                    <div>
+                                        <p className={`font-bold ${file.status === 'success' ? 'text-emerald-800' :
+                                                file.status === 'error' ? 'text-red-800' :
+                                                    'text-slate-700'
+                                            }`}>{file.name}</p>
+                                        <div className="flex items-center space-x-2 mt-0.5">
+                                            <p className="text-xs font-semibold text-slate-400">{formatFileSize(file.size)}</p>
+                                            {file.status === 'uploading' && (
+                                                <span className="text-[10px] font-bold text-primary-600 bg-primary-100 px-1.5 py-0.5 rounded tracking-wide uppercase">Uploading...</span>
+                                            )}
+                                            {file.status === 'error' && file.error && (
+                                                <span className="text-[10px] font-bold text-red-600 bg-red-100 px-1.5 py-0.5 rounded tracking-wide truncate max-w-[150px]">{file.error}</span>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div className="flex items-center space-x-2">
-                                {file.status === 'uploading' && (
-                                    <Loader2 size={18} className="text-primary-400 animate-spin" />
-                                )}
-                                {file.status === 'success' && (
-                                    <Check size={18} className="text-green-400" />
-                                )}
-                                {file.status === 'error' && (
-                                    <AlertCircle size={18} className="text-red-400" />
-                                )}
-                                <button
-                                    onClick={() => removeFile(file.id)}
-                                    className="p-1 rounded hover:bg-dark-700 text-dark-400 hover:text-white"
-                                >
-                                    <X size={16} />
-                                </button>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
-            )}
+                                <div className="flex items-center space-x-3">
+                                    {file.status === 'uploading' && (
+                                        <div className="bg-primary-50 p-1.5 rounded-full">
+                                            <Loader2 size={18} className="text-primary-500 animate-spin" />
+                                        </div>
+                                    )}
+                                    {file.status === 'success' && (
+                                        <div className="bg-emerald-100 p-1.5 rounded-full">
+                                            <Check size={18} className="text-emerald-600" />
+                                        </div>
+                                    )}
+                                    {file.status === 'error' && (
+                                        <div className="bg-red-100 p-1.5 rounded-full">
+                                            <AlertCircle size={18} className="text-red-500" />
+                                        </div>
+                                    )}
+                                    <button
+                                        onClick={() => removeFile(file.id)}
+                                        className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-600 transition-colors focus:ring-2 focus:ring-slate-300"
+                                        title="Remove"
+                                    >
+                                        <X size={16} />
+                                    </button>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

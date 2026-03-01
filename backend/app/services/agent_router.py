@@ -1,4 +1,4 @@
-"""
+﻿"""
 Agent Router Service
 Routes queries to appropriate data sources (Vector DB or SQL DB)
 Uses a simple LLM-based approach for compatibility
@@ -103,15 +103,25 @@ class AgentRouter:
             
             # Gather context from relevant sources
             if "documents" in data_sources:
-                doc_result = self._search_documents(query)
-                if "No relevant documents" not in doc_result:
+                results = self.vector_store.query(query, n_results=3)
+                if results:
+                    formatted = []
+                    for i, result in enumerate(results, 1):
+                        source_name = result["metadata"].get("source", "Unknown")
+                        content = result["content"]
+                        score = result.get("similarity_score", 0.0)
+                        formatted.append(f"[Source: {source_name}]\n{content[:500]}")
+                        
+                        sources_list.append({
+                            "type": "document",
+                            "name": source_name,
+                            "snippet": content,
+                            "score": score,
+                        })
+                    
+                    doc_result = "\n\n---\n\n".join(formatted)
                     context_parts.append(f"📄 From Knowledge Base:\n{doc_result}")
-                    sources_list.append({
-                        "type": "document",
-                        "name": "Knowledge Base",
-                        "snippet": query[:100],
-                    })
-            
+
             if "database" in data_sources:
                 db_result = self._query_database(query)
                 import logging

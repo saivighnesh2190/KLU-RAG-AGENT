@@ -13,6 +13,7 @@ class SourceInfo(BaseModel):
     type: str = Field(..., description="Source type: 'document' or 'database'")
     name: str = Field(..., description="Source name (document name or table name)")
     snippet: str = Field(default="", description="Relevant snippet or query")
+    score: float = Field(default=0.0, description="Relevance score from vector search")
 
 
 class ChatRequest(BaseModel):

@@ -8,7 +8,7 @@ const TypingIndicator = () => {
                 <div className="w-2 h-2 rounded-full bg-primary-400 typing-dot" />
                 <div className="w-2 h-2 rounded-full bg-primary-400 typing-dot" />
             </div>
-            <span className="text-sm text-dark-400">KLU Agent is thinking...</span>
+            <span className="text-sm text-slate-500 font-medium">KLU Agent is thinking...</span>
         </div>
     );
 };

@@ -1,0 +1,62 @@
+# KLU RAG Agent - Project Overview
+
+This project is a sophisticated, full-stack AI Campus Assistant built for KL University. It uses a **Retrieval-Augmented Generation (RAG)** architecture to provide accurate, context-aware answers by combining document-based knowledge with structured database data.
+
+## 🏗️ Technical Architecture
+
+The application follows a modern decoupled architecture:
+
+### 1. Backend (FastAPI + LangChain)
+The backend is built with Python 3.11+ and serves as the brain of the assistant.
+- **API Framework**: FastAPI for high-performance async endpoints.
+- **LangChain Orchestration**: The core logic is powered by LangChain, using:
+    - **LCEL (LangChain Expression Language)**: For clean, declarative chaining of prompts and LLMs.
+    - **SQL Agent**: A specialized agent toolkit that allows the AI to autonomously navigate the SQLite schema.
+    - **Document Loaders & Splitters**: Uses `RecursiveCharacterTextSplitter` for context-aware chunking.
+- **Dual-Source Routing**:
+    - **Vector Store (ChromaDB)**: Stores document embeddings (PDFs, TXT, MD) for semantic search.
+    - **SQL Database (SQLite)**: Stores structured campus data (Students, Faculty, Courses, etc.).
+- **Query Routing**: An [AgentRouter](file:///d:/vighnesh/KLU-RAG-AGENT/backend/app/services/agent_router.py#16-199) intelligently identifies whether a user's question needs information from documents, the database, or both.
+
+### 2. Frontend (React + Vite)
+The frontend provides a premium, responsive user experience.
+- **Modern UI**: Built with React 18 and Vite for fast development and execution.
+- **Styling**: Tailwind CSS for a sleek, dark-themed interface with glassmorphism effects.
+- **State Management**: React Context handles global state like chat history and user sessions.
+- **Animations**: Framer Motion provides smooth transitions and micro-interactions.
+
+## 🌟 Key Features
+
+### 💬 Intelligent Chat
+- **Context-Aware**: Remembers previous messages in a session for natural conversations.
+- **Source Attribution**: Clearly shows whether the information came from the knowledge base or the college database.
+- **Rich Rendering**: Supports Markdown, Code snippets, and Tables in responses.
+
+### 📊 Admin Dashboard
+- **Document Management**: Admins can upload, view, and delete documents from the knowledge base.
+- **Database Insights**: Real-time statistics on students, faculty, and other campus entities.
+- **System Monitoring**: Tracks LLM provider status, embedding models, and server uptime.
+
+### 📄 Document Processor
+- Automatically handles PDF, TXT, and Markdown files.
+- Chunks text and generates embeddings using Sentence Transformers for high-quality semantic search.
+
+## 📂 Core Project Structure
+
+```text
+KLU-RAG-AGENT/
+├── backend/
+│   ├── app/
+│   │   ├── routers/       # API endpoints (Chat, Docs, Admin)
+│   │   ├── services/      # Business logic (RAG, SQL Agent, Processor)
+│   │   └── models/        # Database schemas and Pydantic models
+│   └── data/              # SQLite and ChromaDB persistence
+├── frontend/
+│   ├── src/
+│   │   ├── components/    # Reusable UI elements (Chat, Admin, Layout)
+│   │   ├── pages/         # Main views (ChatPage, AdminPage)
+│   │   └── api/           # Backend communication layer
+```
+
+---
+Built with a focus on **speed, accuracy, and user experience** to serve as a comprehensive information hub for KL University.

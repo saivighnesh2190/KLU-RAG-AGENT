@@ -1,0 +1,84 @@
+# Deep Dive: LangChain in KLU RAG Agent
+
+LangChain is the orchestrator (the "glue") that connects the Large Language Model (LLM) to your data and external tools. Here is exactly why, where, and how it is used in your project.
+
+---
+
+## 🚩 1. WHY we use LangChain?
+Without LangChain, you would have to manually write code for every API call, handle retries, format prompts for different models (Gemini vs. OpenAI), and parse raw JSON responses yourself.
+
+**The Benefits:**
+- **Standardization:** It provides a universal interface. Whether you use Gemini or OpenAI, the code looks the same (`llm.invoke()`).
+- **Chainability (LCEL):** It allows you to build complex logic pipelines (e.g., *Find Data -> Format Prompt -> Generate Answer*) using the readable `|` (pipe) syntax.
+- **Agentic Capabilities:** It provides pre-built "Agents" that can reason. For example, our SQL Agent doesn't just "guess" SQL; it looks at the tables, writes the SQL, checks for errors, and fixes them—all automatically.
+- **RAG Utilities:** Built-in tools for splitting long PDFs into meaningful "chunks" and handling document metadata seamlessly.
+
+---
+
+## 📍 2. WHERE is it used?
+
+### A. The "LLM Provider" ([llm_provider.py](file:///d:/vighnesh/KLU-RAG-AGENT/backend/app/services/llm_provider.py))
+This is the base layer.
+- **What it does:** Uses `langchain_google_genai` and `langchain_openai` to create a factory.
+- **Role:** It abstracts the model. The rest of the app doesn't care which AI is running; it just sees a LangChain `BaseLanguageModel`.
+
+### B. The "Document Processor" ([document_processor.py](file:///d:/vighnesh/KLU-RAG-AGENT/backend/app/services/document_processor.py))
+This is the ingestion layer.
+- **What it does:** Uses `RecursiveCharacterTextSplitter`.
+- **Role:** Instead of cutting text blindly at 1000 characters, LangChain's splitter looks for natural breaks (paragraphs, sentences) so the AI doesn't lose context mid-sentence.
+
+### C. The "SQL Agent" ([sql_agent.py](file:///d:/vighnesh/KLU-RAG-AGENT/backend/app/services/sql_agent.py)) 🚀 *CRITICAL*
+This is the database layer.
+- **What it does:** Uses `SQLDatabaseToolkit` and `create_sql_agent`.
+- **Role:** It gives the AI "eyes" to see your database schema. It identifies that a question about "GPA" should look at the `students` table and the `cgpa` column.
+
+### D. The "Agent Router" ([agent_router.py](file:///d:/vighnesh/KLU-RAG-AGENT/backend/app/services/agent_router.py))
+This is the orchestration layer.
+- **What it does:** Uses **LCEL (LangChain Expression Language)**.
+- **Role:** It combines the user's question, the retrieved context (from PDF/SQL), and a system prompt into a single chain to generate the final response.
+
+---
+
+## 🛠️ 3. HOW is it used? (Code Examples)
+
+### 1. The Power of the Pipe (`|`) - LCEL
+In [agent_router.py](file:///d:/vighnesh/KLU-RAG-AGENT/backend/app/services/agent_router.py), we define the AI's "thought process" like this:
+```python
+# The chain definition
+chain = prompt | llm | StrOutputParser()
+
+# The execution
+answer = chain.invoke({"context": context, "query": query})
+```
+**Explanation:** This tells LangChain: "Take the **Prompt**, pass it to the **LLM**, then take that output and **Parse** it into a clean string." This is much cleaner than nested function calls.
+
+### 2. The ReAct Agent Pattern
+In [sql_agent.py](file:///d:/vighnesh/KLU-RAG-AGENT/backend/app/services/sql_agent.py), we initialize a reasoning agent:
+```python
+self._agent = create_sql_agent(
+    llm=llm,
+    toolkit=toolkit,
+    verbose=True,
+    handle_parsing_errors=True
+)
+```
+**Explanation:** When you ask "Who is the HOD of CSE?", LangChain doesn't just run one prompt. It goes through a "Thought" -> "Action" -> "Observation" loop:
+1. **Thought:** I need to find the HOD for the CSE department.
+2. **Action:** Query the `departments` table for `dept_name LIKE '%CSE%'`.
+3. **Observation:** The database returned "Dr. X".
+4. **Final Answer:** The HOD of CSE is Dr. X.
+
+### 3. Smart Text Splitting
+In [document_processor.py](file:///d:/vighnesh/KLU-RAG-AGENT/backend/app/services/document_processor.py):
+```python
+self.text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=1000,
+    chunk_overlap=200,
+    separators=["\n\n", "\n", " ", ""]
+)
+```
+**Explanation:** This ensures that when a PDF is "read" by the AI, the information is broken into 1000-character chunks with a 200-character "overlap." The overlap ensures that if a fact is split across two chunks, the AI still sees the context on both sides.
+
+---
+**Summary for Presentation:**
+"We use LangChain as our core orchestration framework. It allows us to build a **modular architecture** where we can easily switch LLMs, use **LCEL** for readable logic chains, and deploy **autonomous agents** that can safely and accurately query our campus SQL database without manually writing every query."
